@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
@@ -13,7 +15,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        return Post::latest()->get();
+        return Post::with('user:id,name')->latest()->get();
     }
 
     /**
@@ -27,7 +29,7 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePostRequest $request)
+    public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|min:3',
@@ -44,10 +46,14 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Request $request, Post $post)
     {
-        return $post;
+        return $post->load('user:id');
     }
+//    public function show(Post $post)
+//    {
+//        return Post::with('user:id')->get();
+//    }
 
     /**
      * Show the form for editing the specified resource.
